@@ -1,11 +1,8 @@
-import React, { useState, forwardRef, useContext } from "react";
-import FormControl from '@mui/material/FormControl'
+import React, { useState, forwardRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Visibility, VisibilityOff } from "@mui/icons-material/";
-import { Box,Button, Paper, TextField, Typography,  InputAdornment, IconButton, Snackbar, } from "@mui/material";
-import MuiAlert from '@mui/material/Alert'
-import UserContext from "../../context/User/UserContext";
-
+import { Box, Button, Paper, TextField, Typography, FormControl, InputAdornment, IconButton, Snackbar } from "@mui/material";
+import MuiAlert from "@mui/material/Alert";
 
 const BACKEND_URL = "http://localhost:5000";
 
@@ -14,14 +11,8 @@ const SnackAlert = forwardRef(function SnackAlert(props, ref) {
 });
 
 const App = () => {
-
-  const {loggedin, setLoggedin} = useContext(UserContext)
-
-
-
-
   //Get the value of input fields
-  const [Credentials, setCredentials] = useState({ name: "", email: "", password: "" });
+  const [Credentials, setCredentials] = useState({ email: "", password: "" });
   const CredsHandle = (e) => {
     setCredentials({ ...Credentials, [e.target.name]: e.target.value });
     // console.table(Credentials);
@@ -31,46 +22,38 @@ const App = () => {
   const [snackbar, setSnackbar] = useState({
     open: false,
     msg: "",
-    type:"warning"
+    type: "warning",
   });
   const handleClose = (event, reason) => {
     if (reason === "clickaway") {
       return;
     }
-    setSnackbar({ open: false,type:snackbar.type });
+    setSnackbar({ open: false, type: snackbar.type });
   };
 
-  //Create a user on Click Signin
-  const createUser = async (e) => {
+  //Create user on Click Signin
+  const loginUser = async (e) => {
     e.preventDefault();
-    const { name, email, password } = Credentials;
-    const response = await fetch(`${BACKEND_URL}/api/auth/createuser`, {
+    const { email, password } = Credentials;
+    const response = await fetch(`${BACKEND_URL}/api/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, email, password }),
+      body: JSON.stringify({ email, password }),
     });
     const data = await response.json();
-    //To print console.log properly
-    // console.log(JSON.stringify(data, null, " "));
 
     if (data.success) {
       setSnackbar({ open: true, msg: data.msg, type: "success" });
       localStorage.setItem("token", data.authtoken);
-      setLoggedin(true)
+    } else {
+      setSnackbar({ open: true, msg: data.msg, type: "warning" });
     }
-    else{
-      setSnackbar({ open: true, msg: data.msg, type:"warning" });
-    }
-    // alert("User Created")
   };
-  console.log(loggedin)
 
   //Navigate user to signin page
   const navigate = useNavigate();
-  const gotoSignin = () => {
-    // alert("User Created")
-    navigate("/signin" );
-    // <Navigate to={'./Signin.js'}/>
+  const gotoSignup = () => {
+    navigate("/signup");
   };
 
   //Password Visibility toggle
@@ -81,25 +64,15 @@ const App = () => {
     if (passVisible) setPassType("password");
     else setPassType("text");
   };
+
   return (
     <Box className="mx-auto container  ">
       <Paper className="my-10 p-10 bg-gradient-to-r from-[#FFECD2]  to-[#FCB69F]">
         <Typography variant="h4" align="center" p={5}>
           Sign Up
         </Typography>
-        <Box marginX={"auto"} className={"w-fit bg"}>
+        <Box marginX={"auto"} className={"w-fit"}>
           <FormControl>
-            <TextField
-              onChange={CredsHandle}
-              name="name"
-              value={Credentials.name}
-              type="text"
-              margin="normal"
-              aria-label="name"
-              label={"name"}
-              color="admin"
-              className={"w-96"}
-            />
             <TextField
               onChange={CredsHandle}
               name="email"
@@ -132,23 +105,23 @@ const App = () => {
               }}
             />
 
-            <Button onClick={createUser} variant="contained" sx={{ marginX: "auto", marginTop: "4px" }}>
-              Sign Up
+            <Button onClick={loginUser} variant="contained" sx={{ marginX: "auto", marginTop: "4px" }}>
+              Sign In
             </Button>
             <Snackbar
-              autoHideDuration={6000}
+              autoHideDuration={4000}
               anchorOrigin={{ vertical: "top", horizontal: "center" }}
               open={snackbar.open}
               onClose={handleClose}
             >
-              <SnackAlert variant="filled" onClose={handleClose} severity={`${snackbar.type}`}>
+              <SnackAlert onClose={handleClose} variant="filled" severity={`${snackbar.type}`}>
                 {snackbar.msg}
               </SnackAlert>
             </Snackbar>
             <Box className="flex flex-row items-center my-4 justify-between">
-              <Typography variant="subtitle1">Already have an account</Typography>
-              <Button onClick={gotoSignin} variant="text" sx={{ alignItems: "end", padding: "0" }} size={"small"}>
-                Sign IN
+              <Typography variant="subtitle1">Create a new Account</Typography>
+              <Button onClick={gotoSignup} variant="text" sx={{ alignItems: "end", padding: "0" }} size={"small"}>
+                Sign Up
               </Button>
             </Box>
           </FormControl>
