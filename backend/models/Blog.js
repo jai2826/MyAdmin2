@@ -2,13 +2,11 @@ const mongoose = require('mongoose')
 const { Schema } = mongoose;
 const BlogsSchema = new Schema({
   user: {
-    type: mongoose.Schema.Types.ObjectId,
-    default: "Anonymous",
+    type: Schema.Types.ObjectId,
     ref: "user",
   },
   title: String,
   post: String,
-  body: String,
   date: {
     type: Date,
     default: Date.now,

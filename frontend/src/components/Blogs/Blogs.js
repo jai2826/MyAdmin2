@@ -1,12 +1,14 @@
-import { Box } from '@mui/material'
+import { Box, Stack } from '@mui/material'
 import React from 'react'
+import BlogHeader from './BlogHeader'
 import BlogTable from './BlogTable'
 
 const Blogs = () => {
   return (
-    <Box m={4}>
+    <Stack m={4} spacing={8}>
+      <BlogHeader/>
       <BlogTable />
-    </Box>
+    </Stack>
   )
 }
 

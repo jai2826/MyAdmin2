@@ -3,10 +3,16 @@ import UserState from "./context/User/UserState";
 import Signup from "./components/Authentication/Signup";
 import Signin from "./components/Authentication/Signin";
 import Blogs from "./components/Blogs/Blogs";
+import Users from "./components/Users/Users";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { grey } from "@mui/material/colors";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Layout from "./components/Layout";
+import AddBlogs from "./components/Blogs/AddBlogs";
+import BlogState from "./context/Blogs/BlogState";
+import EditBlog from "./components/Blogs/EditBlog";
+import Geekcell from "./components/Geekcell";
+import AddUser from "./components/Users/AddUser";
+
 
 const theme = createTheme({
   palette: {
@@ -21,19 +27,23 @@ const App = () => {
     <BrowserRouter>
       <ThemeProvider theme={theme}>
         <UserState>
-          <Routes>
-            <Route path="/signin" element={<Signin />} />
-            <Route path="/signup" element={<Signup />} />
-          </Routes>
-          <Layout>
+          <BlogState>
             <Routes>
-              <Route path="/" element={<Blogs/>} />
-              {/* <Route path="/" element={<Signin />} /> */}
+              <Route path="/signin" element={<Signin />} />
+              <Route path="/signup" element={<Signup />} />
+              <Route path="/" element={<Layout />}>
+                <Route path="blogs" element={<Blogs />} />
+                <Route path="blogs/addblogs" element={<AddBlogs />} />
+                <Route path="blogs/editblogs" element={<EditBlog />} />
+                <Route path="users" element={<Users />} />
+                <Route path="users/adduser" element={<AddUser />} />
+              </Route>
             </Routes>
-          </Layout>
+          </BlogState>
         </UserState>
       </ThemeProvider>
     </BrowserRouter>
+    // <Geekcell/>
   );
 };
 

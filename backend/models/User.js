@@ -7,7 +7,6 @@ const UserSchema = new Schema({
   password:String,
   role:{
     type:String,
-    enum:[ "Author", "Admin", "Super Admin"],
     default:"Author"
   },
   date: {

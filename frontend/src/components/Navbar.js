@@ -1,4 +1,5 @@
-import * as React from "react";
+import React,{useContext} from "react";
+import {useNavigate} from 'react-router-dom'
 import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -12,10 +13,30 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import ArticleIcon from "@mui/icons-material/Article";
+import UserContext from "../context/User/UserContext";
 
 const drawerWidth = 240;
 
 export default function PermanentDrawerLeft() {
+  const navigate =  useNavigate();
+  const {loggedin,setLoggedin,setSnackbar} = useContext(UserContext)
+
+  //LogOut 
+  const logOut = ()=>{
+    localStorage.removeItem("token");
+    setLoggedin(false)
+    setSnackbar({open:true,msg:"Logged Out Successfully",type:"success"})
+    navigate('/signin',{replace:true})
+  }
+  
+
+  // Handle navigations on click of each element in NavList
+  const NavigationHandler = ({route})=>{
+    navigate(route,);
+  }
+
+
+
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
@@ -46,7 +67,8 @@ export default function PermanentDrawerLeft() {
         <Divider />
         <List>
           <ListItem disablePadding>
-            <ListItemButton onClick={() => alert("Hello")}>
+            <ListItemButton  onClick={()=>{NavigationHandler({route:"blogs"})}}>
+            {/* <ListItemButton > */}
               <ListItemIcon>
                 <ArticleIcon />
               </ListItemIcon>
@@ -54,7 +76,7 @@ export default function PermanentDrawerLeft() {
             </ListItemButton>
           </ListItem>
           <ListItem disablePadding>
-            <ListItemButton onClick={() => alert("Hello")}>
+            <ListItemButton onClick={()=>{NavigationHandler({route:"blogs"})}}>
               <ListItemIcon>
                 <ArticleIcon />
               </ListItemIcon>
@@ -62,7 +84,7 @@ export default function PermanentDrawerLeft() {
             </ListItemButton>
           </ListItem>
           <ListItem disablePadding>
-            <ListItemButton onClick={() => alert("Hello")}>
+            <ListItemButton onClick={()=>{NavigationHandler({route:"users"})}}>
               <ListItemIcon>
                 <ArticleIcon />
               </ListItemIcon>
@@ -70,7 +92,7 @@ export default function PermanentDrawerLeft() {
             </ListItemButton>
           </ListItem>
           <ListItem disablePadding>
-            <ListItemButton onClick={() => alert("Hello")}>
+            <ListItemButton onClick={()=>{NavigationHandler({route:"blogs"})}}>
               <ListItemIcon>
                 <ArticleIcon />
               </ListItemIcon>
@@ -78,11 +100,19 @@ export default function PermanentDrawerLeft() {
             </ListItemButton>
           </ListItem>
           <ListItem disablePadding>
-            <ListItemButton onClick={() => alert("Hello")}>
+            <ListItemButton onClick={()=>{NavigationHandler({route:"blogs"})}}>
               <ListItemIcon>
                 <ArticleIcon />
               </ListItemIcon>
               <ListItemText primary={"Settings"} />
+            </ListItemButton>
+          </ListItem>
+          <ListItem disablePadding>
+            <ListItemButton onClick={logOut}>
+              <ListItemIcon>
+                <ArticleIcon />
+              </ListItemIcon>
+              <ListItemText primary={"Log Out"} />
             </ListItemButton>
           </ListItem>
         </List>

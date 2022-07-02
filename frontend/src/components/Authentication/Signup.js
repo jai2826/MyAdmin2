@@ -1,24 +1,13 @@
-import React, { useState, forwardRef, useContext } from "react";
-import FormControl from '@mui/material/FormControl'
+import React, { useState,  useContext } from "react";
+import FormControl from "@mui/material/FormControl";
 import { useNavigate } from "react-router-dom";
 import { Visibility, VisibilityOff } from "@mui/icons-material/";
-import { Box,Button, Paper, TextField, Typography,  InputAdornment, IconButton, Snackbar, } from "@mui/material";
-import MuiAlert from '@mui/material/Alert'
+import { Box, Button, Paper, TextField, Typography, InputAdornment, IconButton, Snackbar } from "@mui/material";
 import UserContext from "../../context/User/UserContext";
 
 
-const BACKEND_URL = "http://localhost:5000";
-
-const SnackAlert = forwardRef(function SnackAlert(props, ref) {
-  return <MuiAlert elevation={6} ref={ref} {...props} />;
-});
-
 const App = () => {
-
-  const {loggedin, setLoggedin} = useContext(UserContext)
-
-
-
+  const { loggedin, setLoggedin, setSnackbar, snackbar } = useContext(UserContext);
 
   //Get the value of input fields
   const [Credentials, setCredentials] = useState({ name: "", email: "", password: "" });
@@ -27,24 +16,11 @@ const App = () => {
     // console.table(Credentials);
   };
 
-  //SnackBar Functioning
-  const [snackbar, setSnackbar] = useState({
-    open: false,
-    msg: "",
-    type:"warning"
-  });
-  const handleClose = (event, reason) => {
-    if (reason === "clickaway") {
-      return;
-    }
-    setSnackbar({ open: false,type:snackbar.type });
-  };
-
   //Create a user on Click Signin
   const createUser = async (e) => {
     e.preventDefault();
     const { name, email, password } = Credentials;
-    const response = await fetch(`${BACKEND_URL}/api/auth/createuser`, {
+    const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/auth/createuser`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name, email, password }),
@@ -56,21 +32,17 @@ const App = () => {
     if (data.success) {
       setSnackbar({ open: true, msg: data.msg, type: "success" });
       localStorage.setItem("token", data.authtoken);
-      setLoggedin(true)
+      setLoggedin(true);
+      navigate("/blogs", { replace: true });
+    } else {
+      setSnackbar({ open: true, msg: data.msg, type: "warning" });
     }
-    else{
-      setSnackbar({ open: true, msg: data.msg, type:"warning" });
-    }
-    // alert("User Created")
   };
-  console.log(loggedin)
 
   //Navigate user to signin page
   const navigate = useNavigate();
   const gotoSignin = () => {
-    // alert("User Created")
-    navigate("/signin" );
-    // <Navigate to={'./Signin.js'}/>
+    navigate("/signin",{replace:loggedin});
   };
 
   //Password Visibility toggle
@@ -81,6 +53,7 @@ const App = () => {
     if (passVisible) setPassType("password");
     else setPassType("text");
   };
+
   return (
     <Box className="mx-auto container  ">
       <Paper className="my-10 p-10 bg-gradient-to-r from-[#FFECD2]  to-[#FCB69F]">
@@ -135,16 +108,7 @@ const App = () => {
             <Button onClick={createUser} variant="contained" sx={{ marginX: "auto", marginTop: "4px" }}>
               Sign Up
             </Button>
-            <Snackbar
-              autoHideDuration={6000}
-              anchorOrigin={{ vertical: "top", horizontal: "center" }}
-              open={snackbar.open}
-              onClose={handleClose}
-            >
-              <SnackAlert variant="filled" onClose={handleClose} severity={`${snackbar.type}`}>
-                {snackbar.msg}
-              </SnackAlert>
-            </Snackbar>
+
             <Box className="flex flex-row items-center my-4 justify-between">
               <Typography variant="subtitle1">Already have an account</Typography>
               <Button onClick={gotoSignin} variant="text" sx={{ alignItems: "end", padding: "0" }} size={"small"}>

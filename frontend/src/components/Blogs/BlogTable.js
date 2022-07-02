@@ -1,43 +1,43 @@
-import * as React from 'react';
-import { DataGrid } from '@mui/x-data-grid';
+import React, { useContext, useEffect, useState } from "react";
+import { DataGrid } from "@mui/x-data-grid";
+import BlogContext from "../../context/Blogs/BlogContext";
+import { Button } from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 const columns = [
-  { field: 'id', headerName: 'ID', width: 100 },
-  { field: 'firstName', headerName: 'First name', width: 200 },
-  { field: 'lastName', headerName: 'Last name', width: 200 },
-  { field:'age',headerName:"Age",width:200},
-  {
-    field: 'fullName',
-    headerName: 'Full name',
-    description: 'This column has a value getter and is not sortable.',
-    sortable: false,
-    width: 400,
-    valueGetter: (params) =>
-      `${params.row.firstName || ''} ${params.row.lastName || ''}`,
-  },
+  { field: "id", headerName: "ID", width: 250 },
+  { field: "user", headerName: "UserId", width: 250 },
+  { field: "title", headerName: "Title", width: 200 },
+  { field: "categories", headerName: "Categories", width: 200 },
+  { field: "utility", headerName: "Utility", width: 200, sortable: false },
 ];
 
-const rows = [
-  { id: 1, lastName: 'Snow', firstName: 'Jon', age: 35 },
-  { id: 2, lastName: 'Lannister', firstName: 'Cersei', age: 42 },
-  { id: 3, lastName: 'Lannister', firstName: 'Jaime', age: 45 },
-  { id: 4, lastName: 'Stark', firstName: 'Arya', age: 16 },
-  { id: 5, lastName: 'Targaryen', firstName: 'Daenerys', age: 54 },
-  { id: 6, lastName: 'Melisandre', firstName: null, age: 150 },
-  { id: 7, lastName: 'Clifford', firstName: 'Ferrara', age: 44 },
-  { id: 8, lastName: 'Frances', firstName: 'Rossini', age: 36 },
-  { id: 9, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
-];
+const BACKEND_URL = "http://localhost:5000";
 
 export default function DataTable() {
+  const { blogs, getblogs, setSelectedBlog,selectedBlog, getoneblog } = useContext(BlogContext);
+
+
+  const BlogSelected=async (item)=>{
+    const data =await getoneblog(item.id);
+    setSelectedBlog(data)
+    // console.log(selectedBlog)
+  }
+  useEffect(() => {
+    getblogs();
+  }, []);
+  
+
+  // console.log(blogs)
+  const rows = blogs.map((item) => {
+    return { id: item._id, user: item.user, title: item.title, categories: item.categories };
+  });
+
+  // const rows = [{ id: 1, user: "Snow", title: "Jon", categories: 35 }];
+
   return (
-    <div style={{ height: 400, width: '100%' }}>
-      <DataGrid
-        rows={rows}
-        columns={columns}
-        pageSize={100}
-        checkboxSelection
-      />
+    <div style={{ height: 600, width: "100%" }}>
+      <DataGrid rows={rows} columns={columns} pageSize={100} onRowClick={(item) => BlogSelected(item)} />
     </div>
   );
 }

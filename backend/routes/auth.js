@@ -37,6 +37,7 @@ router.post(
         name: req.body.name,
         email: req.body.email,
         password: secPass,
+        role: req.body.role||"Author"
       });
       const data = {
         User: {
@@ -53,6 +54,7 @@ router.post(
     }
   }
 );
+
 //Route-2: Authenticate a User using POST "/api/auth/login". NO auth needed
 router.post(
   "/login",
@@ -100,6 +102,16 @@ router.post("/getuser", fetchuser, async (req, res) => {
     let userId = req.user.id;
     // console.log(userId)
     const User = await user.findById(userId).select("-password");
+    res.send(User);
+  } catch (error) {
+    console.log(error);
+    res.status(500).send("Internal error occurred");
+  }
+});
+
+router.post("/getallusers", fetchuser, async (req, res) => {
+  try {
+    const User = await user.find().select("-password");
     res.send(User);
   } catch (error) {
     console.log(error);

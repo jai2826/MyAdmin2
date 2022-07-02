@@ -10,6 +10,12 @@ router.get("/getblog", fetchuser, async (req, res) => {
   res.json(blogs);
 });
 
+//Route-1B Get one specific blog with id
+router.get("/getoneblog/:id", fetchuser, async (req, res) => {
+  const blogs = await Blog.findOne({ user: req.user.id, _id:req.params.id });
+  res.json(blogs);
+});
+
 //Route-2: Create a blog for specific user using GET "/api/blog/createblog". auth needed
 router.post(
   "/createblog",
@@ -19,7 +25,7 @@ router.post(
     body("title", "Title is to Short").isLength({ min: 5 }),
     //Change min length to 200 in Production
     body("post", "post is to Short").isLength({ min: 5 }),
-    body("categories", "Enter atleast one category").exists(),
+    body("categories", "Enter atleast one category").isArray(),
   ],
   async (req, res) => {
     try {
@@ -36,7 +42,7 @@ router.post(
       });
       const savedblog = await blog.save();
       // console.log(savedblog);
-      res.json({ savedblog, msg: "Blog created" });
+      res.json({ savedblog, msg: "Blog created",success:true });
     } catch (error) {
       console.log(error);
       res.status(500).send("Internal Sever Error");
@@ -70,7 +76,7 @@ router.put("/updateblog/:id", fetchuser, async (req, res) => {
     }
 
     blog = await Blog.findByIdAndUpdate(req.params.id, { $set: newBlog }, { new: true });
-    res.json({ blog, msg: "Blog Updated" });
+    res.json({ blog, msg: "Blog Updated",success:true });
   } catch (error) {
     console.log(error);
     res.status(500).send("Internal Sever Error");
